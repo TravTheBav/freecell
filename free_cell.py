@@ -5,6 +5,6 @@ class FreeCell(CardArea):
     card at a time. Any card can be placed into an empty free cell."""
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
     

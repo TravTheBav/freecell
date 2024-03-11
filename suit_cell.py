@@ -7,4 +7,4 @@ class SuitCell(CardArea):
     cannot be removed."""
 
     def __init__(self):
-        super.__init__()
+        super().__init__()

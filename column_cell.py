@@ -10,4 +10,4 @@ class ColumnCell(CardArea):
     If there is no card in a cell, then only rules #2 and #3 are relevant."""
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
