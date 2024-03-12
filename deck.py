@@ -1,3 +1,4 @@
+import random
 from card import Card
 
 class Deck:
@@ -24,3 +25,13 @@ class Deck:
         """Adds a card to the top of the deck."""
 
         self._cards.append(card)
+
+    def draw_card(self):
+        """Pops a card from the cards list and returns it."""
+
+        return self._cards.pop()
+    
+    def shuffle(self):
+        """Shuffles the cards list."""
+
+        random.shuffle(self._cards)

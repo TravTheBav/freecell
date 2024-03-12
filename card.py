@@ -10,21 +10,6 @@ class Card:
         else:
             self._color = "red"
 
-    def get_suit(self):
-        """Returns the card's suit, which is an integer in range [1, 4]."""
-
-        return self._suit
-    
-    def get_value(self):
-        """Returns the card's value, which is an integer in range [1, 13]."""
-
-        return self._value
-    
-    def get_color(self):
-        """Returns the card's color, which is either red or black depending on the suit."""
-
-        return self._color
-    
     def __repr__(self):
         """Formats the card's string representation into 'VALUE of SUIT'."""
 
@@ -48,3 +33,18 @@ class Card:
             value = str(self._value)
 
         return f"{value} of {suits[self._suit]}"
+
+    def get_suit(self):
+        """Returns the card's suit, which is an integer in range [1, 4]."""
+
+        return self._suit
+    
+    def get_value(self):
+        """Returns the card's value, which is an integer in range [1, 13]."""
+
+        return self._value
+    
+    def get_color(self):
+        """Returns the card's color, which is either red or black depending on the suit."""
+
+        return self._color
