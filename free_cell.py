@@ -7,4 +7,14 @@ class FreeCell(CardArea):
     def __init__(self):
         super().__init__()
 
-    
+    def valid_selection(self, card):
+        """Returns True if the card is the card in the cards list and returns
+        False if it is not."""
+
+        if len(self._cards) == 0:  # cannot select a card if free cell is empty
+            return False
+
+        if card == self._cards[0]:
+            return True
+        
+        return False

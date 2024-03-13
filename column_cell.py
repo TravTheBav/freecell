@@ -11,3 +11,29 @@ class ColumnCell(CardArea):
 
     def __init__(self):
         super().__init__()
+
+    def valid_selection(self, card):
+        """Returns True if:
+        1.) card is in list
+        2.) all cards below the attempted selection alternate color and decrement by 1 for each card
+        Otherwise returns False"""
+
+        # guards against an attempt to select a card that isn't in the column
+        if card not in self._cards: return False
+
+        color = card.get_color()
+        value = card.get_value()
+        # comparisons start one card after the selected card; if the selected card is the last card, method returns True
+        card_idx = self._cards.index(card) + 1  
+
+        while card_idx < len(self._cards):
+            current = self._cards[card_idx]
+            if current.get_color() == color or current.get_value() != (value - 1):
+                return False
+            
+            color = current.get_color()
+            value = current.get_value()
+            card_idx += 1
+
+        return True
+
