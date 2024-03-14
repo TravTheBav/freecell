@@ -32,7 +32,20 @@ class Card:
         else:
             value = str(self._value)
 
-        return f"{value} of {suits[self._suit]}"
+        # set text color for the console output based on the card's color
+        if self._color == "red":
+            ansi_color_code = "\033[0;31m"
+        else:
+            ansi_color_code = "\033[0;30m"
+        ansi_end_code = "\033[0m"
+
+        return ansi_color_code + f"{value} of {suits[self._suit]}" + ansi_end_code
+    
+    def get_string_length(self):
+        """Returns the length of the card's string representation."""
+
+        card_string = self.__repr__()
+        return len(card_string) - 11  # subtracts the length of ansi color codes
 
     def get_suit(self):
         """Returns the card's suit, which is an integer in range [1, 4]."""
