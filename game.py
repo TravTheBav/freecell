@@ -17,7 +17,8 @@ class Game:
             "column-cells": {},
             "suit-cells": {}
         }
-        self.init_card_areas()   # initialize the 16 card areas
+        self.init_card_areas()   # initialize the 16 card areas and fill columns with cards
+        self.fill_columns()
 
     def get_card_areas(self):
         """Returns the card areas dictionary."""
@@ -70,7 +71,7 @@ class Game:
                 else:
                     if finished_printing == True: finished_printing = False  # while loop keeps going if at least one card is printed this iteration
 
-                    card_str_length = len(cards[idx].__repr__())
+                    card_str_length = cards[idx].get_string_length()
                     print(cards[idx], end=" "*(white_space_buffer - card_str_length))
 
             print()
