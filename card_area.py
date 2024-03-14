@@ -14,7 +14,17 @@ class CardArea:
 
         return self._cards
     
+    def set_cards(self, cards_list):
+        """Takes in a list of card objects and sets cards data attribute to the list."""
+
+        self._cards = cards_list
+    
     def add_card(self, card):
         """Appends a card to the cards list."""
 
         self._cards.append(card)
+
+    def cards_count(self):
+        """Returns an integer representing the amount of cards in the cards list."""
+
+        return len(self._cards)
