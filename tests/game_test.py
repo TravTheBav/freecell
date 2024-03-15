@@ -65,7 +65,18 @@ class GameTest(unittest.TestCase):
     def test_select_multiple_cards(self):
         """Selects 3 cards from the bottom of a column with 6 cards."""
 
-        pass
+        g = Game()
+        column = g.get_card_areas()["column-cells"][1]
+        cards = [Card(1, 10), Card(2, 13), Card(4, 9), Card(2, 7), Card(3, 6), Card(1, 5)]
+        copy = cards.copy()
+        expected = copy[3:]
+        column.set_cards(cards)
+        card = column.get_cards()[3]
+        g.select_card(card, column)
+
+        self.assertEqual(3, column.cards_count())  # 3 remaining cards in the column
+        self.assertEqual(expected, g.get_selected_cards())  # selected cards matches the last 3 cards of the copied list
+        self.assertEqual(column, g.get_previous_cards_area())  # previous cards area contains the card area passed as an argument
 
 if __name__ == "__main__":
     unittest.main()
