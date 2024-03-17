@@ -19,10 +19,13 @@ class SuitCell(CardArea):
 
         if self.is_empty() and card.get_value() == 1:  # cell is empty and card is an Ace
             return True
+        
         elif self.is_empty() and card.get_value() != 1:  # cell is empty and card is not an Ace
             return False
+        
         else:  # check if card being placed is same suit and one value higher than top of stack
             top_card = self._cards[-1]
+
             if card.get_suit() == top_card.get_suit() and \
                card.get_value() - top_card.get_value() == 1:
                 return True

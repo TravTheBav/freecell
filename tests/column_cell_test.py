@@ -93,33 +93,46 @@ class ColumnCellTests(unittest.TestCase):
     def test_validate_move_to_empty_column_1(self):
         """Returns True when there is one card and the column is empty."""
 
-        pass
+        cc = ColumnCell()
+        cards = [Card(1, 1)]
+        self.assertTrue(cc.valid_move(cards))
 
     def test_validate_move_to_empty_column_2(self):
         """Returns True when there are multiple cards and the column is empty."""
 
-        pass
+        cc = ColumnCell()
+        cards = [Card(1, 13), Card(3, 12), Card(2, 11), Card(4, 10)]
+        self.assertTrue(cc.valid_move(cards))
 
     def test_validate_move_to_occupied_column_1(self):
-        """Returns True when there are multiple cards and:
+        """Returns True when there are multiple selected cards and:
            1.) the last card in the column is one value higher than the first card in the selected
            cards list
            2.) the last card in the column has a different color than the first card in the selected
            cards list"""
         
-        pass
+        cc = ColumnCell()
+        cards = [Card(3, 9), Card(2, 8)]
+        cc.add_card(Card(1, 10))  # Column now has the 10 of clubs
+        self.assertTrue(cc.valid_move(cards))  # 10 of clubs <- 9 of diamonds, 8 of spades is valid
 
     def test_validate_move_to_occupied_column_2(self):
-        """Returns False when there are multiple cards and the last card in the column has the same 
+        """Returns False when there are multiple selected cards and the last card in the column has the same 
         color as the first card in the selected cards list."""
 
-        pass
+        cc = ColumnCell()
+        cards = [Card(1, 4), Card(3, 3), Card(2, 2)]
+        cc.set_cards([Card(2, 2), Card(3, 1), Card(2, 5)])  # last card in column is 5 of spades
+        self.assertFalse(cc.valid_move(cards))  # 5 of spades <- 4 of spades is not valid since colors match
 
     def test_validate_move_to_occupied_column_3(self):
-        """Returns False when there are multiple cards and the last card in the column does not have
+        """Returns False when there are multiple selected cards and the last card in the column does not have
         exactly one value higher than the first card in the selected cards list."""
 
-        pass
+        cc = ColumnCell()
+        cards = [Card(2, 7), Card(3, 6)]
+        cc.set_cards([Card(4, 10)])  # last card in column is 10 of hearts
+        self.assertFalse(cc.valid_move(cards))  # 10 of hearts <- 7 of spades is not valid since 10 - 7 != 1
 
 
 if __name__ == "__main__":

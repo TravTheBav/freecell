@@ -13,10 +13,7 @@ class ColumnCell(CardArea):
         super().__init__()
 
     def valid_selection(self, card):
-        """Returns True if:
-        1.) card is in list
-        2.) all cards below the attempted selection alternate color and decrement by 1 for each card
-        Otherwise returns False"""
+        """Returns True if the card is considered a valid selection, otherwise False."""
 
         # guards against an attempt to select a card that isn't in the column
         if card not in self._cards: return False
@@ -26,6 +23,7 @@ class ColumnCell(CardArea):
         # comparisons start one card after the selected card; if the selected card is the last card, method returns True
         card_idx = self._cards.index(card) + 1  
 
+        # card color must alternate and value of current card must be one less than the previous card
         while card_idx < len(self._cards):
             current = self._cards[card_idx]
             if current.get_color() == color or current.get_value() != (value - 1):
@@ -37,3 +35,20 @@ class ColumnCell(CardArea):
 
         return True
 
+    def valid_move(self, cards):
+        """Returns True if moving the card(s) to the column would be a valid move, otherwise False."""
+
+        # if column is empty, then return True regardless of how many cards are being moved
+        if self.is_empty(): return True
+
+        # else if column is not empty, the last card in the column must:
+        # 1.) be one value higher than the first card in the cards list
+        # 2.) be a different color than the first card in the cards list
+        last_card_in_column = self._cards[-1]
+        first_card_in_selection = cards[0]
+
+        if last_card_in_column.get_value() == first_card_in_selection.get_value() + 1 and \
+           last_card_in_column.get_color() != first_card_in_selection.get_color():
+            return True
+        
+        return False
