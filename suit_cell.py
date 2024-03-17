@@ -11,7 +11,7 @@ class SuitCell(CardArea):
 
     def valid_move(self, cards):
         """Takes in a list of cards. If there is only one card in the list, then returns True
-        if placing that card in the suit cell is considered valid, otherwise returns False."""
+        if placing that card in the suit cell is considered valid. Otherwise returns False."""
 
         if len(cards) != 1: return False  # only one card can be moved at a time to a suit cell
         
