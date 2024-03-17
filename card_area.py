@@ -28,3 +28,10 @@ class CardArea:
         """Returns an integer representing the amount of cards in the cards list."""
 
         return len(self._cards)
+    
+    def is_empty(self):
+        """Returns True if there are no cards, otherwise returns False."""
+
+        if self.cards_count() == 0: return True
+
+        return False

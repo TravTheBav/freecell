@@ -78,5 +78,35 @@ class GameTest(unittest.TestCase):
         self.assertEqual(expected, g.get_selected_cards())  # selected cards matches the last 3 cards of the copied list
         self.assertEqual(column, g.get_previous_cards_area())  # previous cards area contains the card area passed as an argument
 
+    def test_moves_count_new_game(self):
+        """Returns 5 at the start of the game (4 free cells + 1)."""
+
+        g = Game()
+        self.assertEqual(5, g.moves_count())
+
+    def test_moves_count_all_cells_full(self):
+        """Returns 1 when all free cells and columns contain cards."""
+
+        g = Game()
+        column = g.get_card_areas()["column-cells"][1]
+        cards = column.get_cards()
+        for cell_id in range(1, 5):  # distribute last 4 cards in first column among the free cells
+            card = cards.pop()
+            free_cell = g.get_card_areas()["free-cells"][cell_id]
+            free_cell.add_card(card)
+
+        self.assertEqual(1, g.moves_count())
+
+    def test_moves_count_two_empty_columns(self):
+        """Returns 7 when there are 4 empty free cells and 2 empty columns."""
+
+        g = Game()
+        columns = g.get_card_areas()["column-cells"]
+        columns[1].set_cards([])
+        columns[2].set_cards([])
+
+        self.assertEqual(7, g.moves_count())
+
+
 if __name__ == "__main__":
     unittest.main()

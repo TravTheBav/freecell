@@ -90,6 +90,37 @@ class ColumnCellTests(unittest.TestCase):
 
         self.assertFalse(result)
 
+    def test_validate_move_to_empty_column_1(self):
+        """Returns True when there is one card and the column is empty."""
+
+        pass
+
+    def test_validate_move_to_empty_column_2(self):
+        """Returns True when there are multiple cards and the column is empty."""
+
+        pass
+
+    def test_validate_move_to_occupied_column_1(self):
+        """Returns True when there are multiple cards and:
+           1.) the last card in the column is one value higher than the first card in the selected
+           cards list
+           2.) the last card in the column has a different color than the first card in the selected
+           cards list"""
+        
+        pass
+
+    def test_validate_move_to_occupied_column_2(self):
+        """Returns False when there are multiple cards and the last card in the column has the same 
+        color as the first card in the selected cards list."""
+
+        pass
+
+    def test_validate_move_to_occupied_column_3(self):
+        """Returns False when there are multiple cards and the last card in the column does not have
+        exactly one value higher than the first card in the selected cards list."""
+
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()

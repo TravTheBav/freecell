@@ -74,7 +74,10 @@ class Game:
     
     def select_card(self, card, card_area):
         """Removes the card(s) from the card area, appends them to the game's selected cards list, and updates the previous
-        cards location data attribute. Selections do not need to be validated since the valid_selection method will be called first."""
+        cards location data attribute. If all is successful then returns True, else returns False."""
+        
+        # validate selection first
+        if not self.valid_selection(card, card_area): return False
         
         # from bottom to top, continuosly remove cards from the card area until the selected card is reached, then remove that card as well
         # all removed cards are add to selected cards
@@ -93,6 +96,47 @@ class Game:
         self._selected_cards.reverse()
         # set card's previous area data attribute to the passed in card area
         self._previous_cards_area = card_area
+
+        return True
+
+    def moves_count(self):
+        """Returns the count of all empty free cells and column cells, plus one."""
+
+        moves = 1
+        free_cells = self.get_card_areas()["free-cells"]
+        columns = self.get_card_areas()["column-cells"]
+
+        for free_cell in free_cells.values():
+            if free_cell.is_empty(): moves += 1
+
+        for column in columns.values():
+            if column.is_empty(): moves += 1
+
+        return moves
+
+    def valid_move(self, cards, card_area):
+        """Takes a list of cards and a destination card area. If placing the card(s) in the destination
+        card area would result in a valid move, returns True, otherwise False. A free cell can only take
+        one card while a column may take as many cards as there are moves available."""
+
+        if self.moves_count() < len(cards): return False  # cannot move more cards than there are available moves
+
+        return card_area.valid_move(cards)
+
+    def move_cards(self, cards, card_area):
+        """Moves the cards to the destination card area. If move is successful returns True, else returns False."""
+
+        pass
+
+    def move_cards_back_to_previous_area(self):
+        """Moves all selected cards back to their previous area."""
+
+        pass
+
+    def clear_selection(self):
+        """Resets the selected cards data attribute to an empty list and the previous cards area data attribute to None."""
+
+        pass
     
     def print_table(self):
         """Prints out the cards to the console in a readable format."""
@@ -115,7 +159,7 @@ class Game:
         columns = self._card_areas["column-cells"]
         finished_printing = False
         idx = 0
-        white_space_buffer = 22  # used to align all columns vertically
+        white_space_buffer = 20  # used to align all columns vertically
 
         while not finished_printing:
             finished_printing = True
@@ -124,7 +168,7 @@ class Game:
                 cards = column.get_cards()
 
                 if idx >= len(cards):
-                    print(" " * 22, end="")
+                    print(" " * white_space_buffer, end="")
                 else:
                     if finished_printing == True: finished_printing = False  # while loop keeps going if at least one card is printed this iteration
 

@@ -11,10 +11,18 @@ class FreeCell(CardArea):
         """Returns True if the card is the card in the cards list and returns
         False if it is not."""
 
-        if len(self._cards) == 0:  # cannot select a card if free cell is empty
+        if self.is_empty():  # cannot select a card if free cell is empty
             return False
 
         if card == self._cards[0]:
             return True
         
+        return False
+    
+    def valid_move(self, cards):
+        """Takes in a list of cards. Returns True if there is only one card in the list and the free cell is
+        empty, else returns False."""
+
+        if len(cards) == 1 and self.is_empty(): return True
+
         return False
