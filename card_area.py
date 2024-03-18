@@ -35,3 +35,9 @@ class CardArea:
         if self.cards_count() == 0: return True
 
         return False
+    
+    def place_cards(self, cards):
+        """Takes a list of Cards and appends them to the cards data attribute. The ordering of the newly added
+        cards remains the same."""
+
+        self._cards += cards

@@ -124,9 +124,9 @@ class Game:
         return card_area.valid_move(cards)
 
     def move_cards(self, cards, card_area):
-        """Moves the cards to the destination card area. If move is successful returns True, else returns False."""
+        """Takes a list of Cards and moves them to the destination card area."""
 
-        pass
+        card_area.place_cards(cards)
 
     def move_cards_back_to_previous_area(self):
         """Moves all selected cards back to their previous area."""
