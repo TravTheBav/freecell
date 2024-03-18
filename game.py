@@ -130,14 +130,14 @@ class Game:
 
         return moves
 
-    def valid_move(self, cards, card_area):
+    def valid_move(self, card_area):
         """Takes a list of cards and a destination card area. If placing the card(s) in the destination
         card area would result in a valid move, returns True, otherwise False. A free cell can only take
         one card while a column may take as many cards as there are moves available."""
 
-        if self.moves_count() < len(cards): return False  # cannot move more cards than there are available moves
+        if self.moves_count() < len(self._selected_cards): return False  # cannot move more cards than there are available moves
 
-        return card_area.valid_move(cards)
+        return card_area.valid_move(self._selected_cards)
 
     def move_selection_to_area(self, card_area):
         """Moves the selected cards to the destination card area."""
@@ -221,14 +221,48 @@ class Game:
         column with the given id. If the selection is valid, selects the card and returns True. If the selection
         is invalid, no selection is made and returns False."""
 
-        pass
+        # verify that there is not already any selected cards
+        if self.get_selected_cards(): return False
+
+        # verify that column id is in range [1, 8]
+        if column_id not in range(1, 9): return False
+
+        column = self.get_card_areas()["column-cells"][column_id]
+
+        # verify that the card index is a valid index for the given column
+        if card_idx not in range(column.cards_count()): return False
+
+        card = column.get_cards()[card_idx]
+
+        if self.valid_selection(card, column):
+            self.select_card(card, column)
+            return True
+        
+        return False
 
     def select_from_free_cell_with_validation(self, free_cell_id):
         """Takes in a free_cell_id integer (1-4). Selects the card from the free cell with the given id (if the cell
          has a card.) If the selection is valid, selects the card and returns True. If the selection is invalid,
          no selection is made and returns False."""
         
-        pass
+        # verify that there are not already any selected cards
+        if self.get_selected_cards(): return False
+
+        # verify that free cell id is in range [1, 4]
+        if free_cell_id not in range(1, 5): return False
+
+        free_cell = self.get_card_areas()["free-cells"][free_cell_id]
+
+        # verify that the free cell is not empty
+        if free_cell.is_empty(): return False
+
+        card = free_cell.get_cards()[0]
+
+        if self.valid_selection(card, free_cell):
+            self.select_card(card, free_cell)
+            return True
+        
+        return False
 
     def move_cards_with_validation(self, area_type, area_id):
         """Takes in an area_type string, which should be 'free-cell', 'suit-cell', or 'column-cell', and an
@@ -236,4 +270,31 @@ class Game:
          current selection to the card area with the given area_id and returns True. If the movement is invalid
          selected cards are moved back to previous card area and returns False."""
         
-        pass
+        # if there are no selected cards, exit early
+        if not self._selected_cards: return False
+
+        # area id must be in range [1, 8]
+        if area_id not in range(1, 9): return False
+        
+        # verify that area_type string is valid
+        valid_strings = ["free-cell", "suit-cell", "column-cell"]
+        if area_type not in valid_strings: return False
+        
+        # verify that area_id is in range for the area_type
+        if (area_type == "free-cell" or area_type == "suit-cell") and \
+            area_id not in range(1, 5):
+            return False
+        elif area_type == "column-cell" and area_id not in range(1, 9):
+            return False
+
+        # pluralize the string so it can be used as a key for card areas dictionary
+        area_type += "s"
+
+        card_area = self.get_card_areas()[area_type][area_id]
+        
+        if self.valid_move(card_area):
+            self.move_selection_to_area(card_area)
+            return True
+        else:
+            self.move_selection_to_previous_area()
+            return False
