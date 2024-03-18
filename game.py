@@ -139,10 +139,10 @@ class Game:
 
         return card_area.valid_move(cards)
 
-    def move_cards(self, cards, card_area):
-        """Takes a list of Cards and moves them to the destination card area."""
+    def move_selection_to_area(self, card_area):
+        """Moves the selected cards to the destination card area."""
 
-        card_area.place_cards(cards)
+        card_area.place_cards(self._selected_cards)
         self.clear_selection()  # selection and previous area are cleared after card(s) are moved
 
     def move_selection_to_previous_area(self):
@@ -210,3 +210,30 @@ class Game:
 
             print()
             idx += 1
+
+# ---------------------------------------------------------------------------------------------------------
+# METHODS FOR PLAYING IN TERMINAL: These are not used in the Pygame implementation, just for 
+# playing/debugging in the console.
+# ---------------------------------------------------------------------------------------------------------
+
+    def select_from_column_with_validation(self, column_id, card_idx):
+        """Takes in a column_id integer (1-8) and card_idx integer. Selects the card at the given index from the 
+        column with the given id. If the selection is valid, selects the card and returns True. If the selection
+        is invalid, no selection is made and returns False."""
+
+        pass
+
+    def select_from_free_cell_with_validation(self, free_cell_id):
+        """Takes in a free_cell_id integer (1-4). Selects the card from the free cell with the given id (if the cell
+         has a card.) If the selection is valid, selects the card and returns True. If the selection is invalid,
+         no selection is made and returns False."""
+        
+        pass
+
+    def move_cards_with_validation(self, area_type, area_id):
+        """Takes in an area_type string, which should be 'free-cell', 'suit-cell', or 'column-cell', and an
+         area_id integer [(1-8) for columns, (1-4) for free/suit cells]. If the movement is valid, moves the
+         current selection to the card area with the given area_id and returns True. If the movement is invalid
+         selected cards are moved back to previous card area and returns False."""
+        
+        pass
