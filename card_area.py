@@ -14,10 +14,13 @@ class CardArea:
 
         return self._cards
     
-    def set_cards(self, cards_list):
+    def set_cards(self, cards=None):
         """Takes in a list of card objects and sets cards data attribute to the list."""
 
-        self._cards = cards_list
+        if not cards:
+            self._cards = []
+        else:
+            self._cards = cards
     
     def add_card(self, card):
         """Appends a card to the cards list."""

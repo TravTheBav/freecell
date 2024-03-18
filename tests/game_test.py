@@ -107,6 +107,101 @@ class GameTest(unittest.TestCase):
 
         self.assertEqual(7, g.moves_count())
 
+    def test_move_selection_to_previous_free_cell(self):
+        """Moves a card to the previous area, which is an empty free cell."""
+
+        g = Game()
+        free_cell = g.get_card_areas()["free-cells"][1]
+        cards = [Card(3, 2)]
+        g.set_selected_cards(cards)
+        g.set_previous_cards_area(free_cell)
+        g.move_selection_to_previous_area()
+        
+        # selection and previous area are cleared upon card movement
+        self.assertEqual([], g.get_selected_cards())
+        self.assertEqual(None, g.get_previous_cards_area())
+
+        # card has been moved
+        self.assertEqual(cards, free_cell.get_cards())
+
+    def test_move_selection_to_previous_column_1(self):
+        """Moves a single card to the previous area, which is an empty column."""
+
+        g = Game()
+        column_cell = g.get_card_areas()["column-cells"][1]
+        column_cell.set_cards()  # empty column
+        cards = [Card(2, 4)]
+        g.set_selected_cards(cards)
+        g.set_previous_cards_area(column_cell)
+        g.move_selection_to_previous_area()
+
+        # selection and previous area are cleared upon card movement
+        self.assertEqual([], g.get_selected_cards())
+        self.assertEqual(None, g.get_previous_cards_area())
+
+        # card has been moved
+        self.assertEqual(cards, column_cell.get_cards())
+
+    def test_move_selection_to_previous_column_2(self):
+        """Moves a single card to the previous area, which is an occupied column."""
+
+        g = Game()
+        column_cell = g.get_card_areas()["column-cells"][1]
+        column_cell.set_cards()  # empty column
+        column_cell.add_card(Card(1, 1))  # add one card to column
+        cards = [Card(2, 4)]
+        expected = column_cell.get_cards() + cards
+        g.set_selected_cards(cards)
+        g.set_previous_cards_area(column_cell)
+        g.move_selection_to_previous_area()
+
+        # selection and previous area are cleared upon card movement
+        self.assertEqual([], g.get_selected_cards())
+        self.assertEqual(None, g.get_previous_cards_area())
+
+        # card has been moved
+        self.assertEqual(expected, column_cell.get_cards())
+
+    def test_move_selection_to_previous_column_3(self):
+        """Moves multiple cards to the previous area, which is an empty column."""
+
+        g = Game()
+        column_cell = g.get_card_areas()["column-cells"][1]
+        column_cell.set_cards()
+        cards = [Card(2, 4), Card(3, 3), Card(1, 2), Card(4, 1)]
+        g.set_selected_cards(cards)
+        g.set_previous_cards_area(column_cell)
+        g.move_selection_to_previous_area()
+
+        # selection and previous area are cleared upon card movement
+        self.assertEqual([], g.get_selected_cards())
+        self.assertEqual(None, g.get_previous_cards_area())
+
+        # cards have been moved
+        self.assertEqual(cards, column_cell.get_cards())
+
+    def test_move_selection_to_previous_column_4(self):
+        """Moves multiple cards to the previous area, which is an occupied column."""
+
+        g = Game()
+        column_cell = g.get_card_areas()["column-cells"][1]
+        column_cell.set_cards()
+        column_cell.add_card(Card(2, 6))
+        column_cell.add_card(Card(2, 12))
+        column_cell.add_card(Card(1, 10))  # cards in column == [6 of Spades, Queen of Spades, 10 of Clubs]
+        cards = [Card(2, 7), (3, 6), (2, 5)]  # selection == [7 of Spades, 6 of Diamonds, 5 of Spades]
+        expected = column_cell.get_cards() + cards
+        g.set_selected_cards(cards)
+        g.set_previous_cards_area(column_cell)
+        g.move_selection_to_previous_area()
+
+        # selection and previous area are cleared upon card movement
+        self.assertEqual([], g.get_selected_cards())
+        self.assertEqual(None, g.get_previous_cards_area())
+
+        # cards have been moved
+        self.assertEqual(expected, column_cell.get_cards())
+        
 
 if __name__ == "__main__":
     unittest.main()

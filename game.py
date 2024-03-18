@@ -34,10 +34,26 @@ class Game:
 
         return self._selected_cards
     
+    def set_selected_cards(self, cards=None):
+        """Sets the selected cards list to the given list of Cards."""
+
+        if not cards:
+            self._selected_cards = []
+        else:
+            self._selected_cards = cards
+    
     def get_previous_cards_area(self):
         """Returns the card area where the currently selected cards used to be located."""
 
         return self._previous_cards_area
+    
+    def set_previous_cards_area(self, card_area=None):
+        """Sets the previous card's area to the given CardArea."""
+
+        if not card_area:
+            self._previous_cards_area = None
+        else:
+            self._previous_cards_area = card_area
 
     def init_card_areas(self):
         """Fills the card areas dictionary with 4 free cells, 4 suit cells, and 8 column cells."""
@@ -127,16 +143,33 @@ class Game:
         """Takes a list of Cards and moves them to the destination card area."""
 
         card_area.place_cards(cards)
+        self.clear_selection()  # selection and previous area are cleared after card(s) are moved
 
-    def move_cards_back_to_previous_area(self):
+    def move_selection_to_previous_area(self):
         """Moves all selected cards back to their previous area."""
 
-        pass
+        # check all free cells and columns (cards will never be moved back to a suit cell, since once they are
+        # placed in a suit cell they are locked) to see if the previous area matches the current area
+        areas_to_check = []
+
+        for free_cell in self._card_areas["free-cells"].values():
+            areas_to_check.append(free_cell)
+
+        for column in self._card_areas["column-cells"].values():
+            areas_to_check.append(column)
+
+        for card_area in areas_to_check:
+            if card_area == self._previous_cards_area:
+                card_area.place_cards(self._selected_cards)
+                break
+
+        self.clear_selection()  # selection and previous area are cleared after card(s) are moved
 
     def clear_selection(self):
         """Resets the selected cards data attribute to an empty list and the previous cards area data attribute to None."""
 
-        pass
+        self.set_selected_cards()
+        self.set_previous_cards_area()
     
     def print_table(self):
         """Prints out the cards to the console in a readable format."""
