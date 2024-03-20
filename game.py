@@ -2,7 +2,7 @@ from deck import Deck
 from free_cell import FreeCell
 from column_cell import ColumnCell
 from suit_cell import SuitCell
-
+from display import Display
 
 class Game:
     """Represents a game of free cell solitaire. The Game checks for all game logic, such as
@@ -10,6 +10,7 @@ class Game:
     has a deck and various card areas for cards to be placed."""
 
     def __init__(self):
+        self._display = Display(self)
         self._deck = Deck()      # create a new deck and shuffle it
         self._deck.shuffle()
         self._card_areas = {     # format example: card_areas["free-cells"][1] would return the first FreeCell object
@@ -23,6 +24,11 @@ class Game:
         # selected cards stored here and their previous location is saved when they are being moved
         self._selected_cards = []
         self._previous_cards_area = None
+
+    def get_display(self):
+        """Returns the display."""
+
+        return self._display
 
     def get_card_areas(self):
         """Returns the card areas dictionary."""
@@ -58,14 +64,35 @@ class Game:
     def init_card_areas(self):
         """Fills the card areas dictionary with 4 free cells, 4 suit cells, and 8 column cells."""
 
-        # initialize 4 free cells and 4 suit cells
-        for id in range(1, 5):
-            self._card_areas["free-cells"][id] = FreeCell()
-            self._card_areas["suit-cells"][id] = SuitCell()
+        # initialize 4 free cells and set their positions
+        dummy = FreeCell()  # just using a cell-type object to get its width and height; this object is not used otherwise
+        cell_width, cell_height = dummy.get_scaled_width(), dummy.get_scaled_height()
+        x, y = 10, 10
 
-        # initialize 8 column cells
+        for id in range(1, 5):
+            free_cell = FreeCell()
+            free_cell.set_pos(x, y)
+            self._card_areas["free-cells"][id] = free_cell
+            x += (free_cell.get_scaled_width() + 10)
+
+        # initialize 4 suit cells and set their positions
+        x = self._display.get_width() - (cell_width + 10)
+
+        for id in range(4, 0, -1):
+            suit_cell = SuitCell()
+            suit_cell.set_pos(x, y)
+            self._card_areas["suit-cells"][id] = suit_cell
+            x -= (cell_width + 10)
+
+        # initialize 8 column cells and set their positions
+        x = (self._display.get_width() - (240 + 8 * cell_width)) / 2
+        y = 40 + cell_height
+
         for id in range(1, 9):
-            self._card_areas["column-cells"][id] = ColumnCell()
+            column_cell = ColumnCell()
+            column_cell.set_pos(x, y)
+            self._card_areas["column-cells"][id] = column_cell
+            x += (cell_width + 30)
 
     def fill_columns(self):
         """Distributes the 52 cards amongst the 8 columns."""

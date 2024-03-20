@@ -8,7 +8,13 @@ class Display:
     def __init__(self, game):
         
         self._game = game
-        self._surface = pg.display.set_mode((800, 640))
+        self._surface = pg.display.set_mode((1280, 720))
+        pg.display.set_caption("Free Cell")
+
+    def get_width(self):
+        """Returns the width of the screen"""
+
+        return self._surface.get_size()[0]
 
     def check_event(self, event):
         """Checks the type of the event and calls the related event handlers."""
@@ -62,11 +68,41 @@ class Display:
 
         self._surface.fill((75, 105, 47, 255))
 
+    def draw_image(self, image, position):
+        """Takes in an image and a position and draws the image onto the screen at that position."""
+
+        self._surface.blit(image, position)
+
     def render(self):
         """Wipes the display and blits all drawable game objects."""
 
         # fill background with green
         self.fill_background()
 
+        # draw all card areas as well as the cards within them
+        self.render_card_areas()
+
         # wipe and update the screen
         pg.display.flip()
+
+    def render_card_areas(self):
+        """Draws card areas to the screen."""
+
+        self.render_cells("free-cells")
+        self.render_cells("suit-cells")
+        self.render_cells("column-cells")
+
+    def render_cells(self, area_type):
+        """Takes in an area type string, which can be 'suit-cells', 'column-cells', or 'free-cells'.
+         Draws all of the specified cells to the screen."""
+        
+        cells = self._game.get_card_areas()[area_type]
+
+        # draw columns
+        if area_type == "column-cells":
+            for cell in cells.values():
+                self.draw_image(cell.get_image(), cell.get_pos())  # right now this looks like code duplication, but this is necessary for when we add card drawing
+        # draw free cells or suit cells
+        else:
+            for cell in cells.values():
+                self.draw_image(cell.get_image(), cell.get_pos())

@@ -5,15 +5,17 @@ import pygame as pg
 
 
 def main():
-    """Main game loop function. Initializes Pygame, the game, and
-     the display."""
-
-    game = Game()
-    display = Display(game)
-    clock = pg.time.Clock()
+    """Main game loop function. Initializes Pygame and the game instance."""
+    
+    # pygame starting setup
     pg.init()
-    pg.display.set_caption("Free Cell")
+    clock = pg.time.Clock()
 
+    # set game and display objects
+    game = Game()
+    display = game.get_display()
+    
+    # game loop
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
