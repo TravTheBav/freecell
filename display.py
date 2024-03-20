@@ -1,13 +1,17 @@
+import pygame as pg
+
+
 class Display:
-
-    def __init__(self):
-        """A class for linking up the display to the Game logic. Handles mouse movements
-         and button clicks by the player."""
+    """A class for linking up the display to the Game logic. Handles mouse movements
+     and button clicks by the player."""
         
-        pass
+    def __init__(self, game):
+        
+        self._game = game
+        self._surface = pg.display.set_mode((800, 640))
 
-    def check_events(self):
-        """Calls all event handlers."""
+    def check_event(self, event):
+        """Checks the type of the event and calls the related event handlers."""
 
         pass
 
@@ -53,7 +57,16 @@ class Display:
         
         pass
 
+    def fill_background(self):
+        """Makes background green."""
+
+        self._surface.fill((75, 105, 47, 255))
+
     def render(self):
         """Wipes the display and blits all drawable game objects."""
 
-        pass
+        # fill background with green
+        self.fill_background()
+
+        # wipe and update the screen
+        pg.display.flip()
