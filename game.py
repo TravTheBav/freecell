@@ -95,16 +95,20 @@ class Game:
             x += (cell_width + 30)
 
     def fill_columns(self):
-        """Distributes the 52 cards amongst the 8 columns."""
+        """Distributes the 52 cards amongst the 8 columns and updates their coordinates."""
 
         # fill left 4 columns with 7 cards each and right 4 columns with 6 cards each
         for col_idx in range(1, 9):
-            cards_amt = 7 if col_idx < 5 else 6 
+            cards_amt = 7 if col_idx < 5 else 6
+            column = self._card_areas["column-cells"][col_idx]
+            x, y = column.get_pos()
 
+            # add cards to column and update coordinates
             for i in range(cards_amt):
-                column = self._card_areas["column-cells"][col_idx]
                 card = self._deck.draw_card()
                 column.add_card(card)
+                card.set_pos(x, y)
+                y += 40  # staggers out cards vertically
 
     def valid_selection(self, card, card_area):
         """Takes a card object and a card_area object as parameters. If selecting the card from the card area would be 

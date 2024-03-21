@@ -1,3 +1,4 @@
+from constants import *
 from mappable_sprite import *
 from sprite_sheet import SpriteSheet
 
@@ -5,12 +6,11 @@ from sprite_sheet import SpriteSheet
 class CardArea(MappableSprite):
     """Represents a generic area to place cards."""
 
-
     def __init__(self, image=None):
 
-        self._width = 48
-        self._height = 64
-        self._scale = 1.8
+        self._width = CARD_WIDTH
+        self._height = CARD_HEIGHT
+        self._scale = SCALE
         self._cards = []
 
         # image can either be set on init by passing in a sprite

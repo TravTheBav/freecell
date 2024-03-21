@@ -98,11 +98,12 @@ class Display:
         
         cells = self._game.get_card_areas()[area_type]
 
-        # draw columns
-        if area_type == "column-cells":
-            for cell in cells.values():
-                self.draw_image(cell.get_image(), cell.get_pos())  # right now this looks like code duplication, but this is necessary for when we add card drawing
-        # draw free cells or suit cells
-        else:
-            for cell in cells.values():
-                self.draw_image(cell.get_image(), cell.get_pos())
+        # draw column/free-cell/suit-cell
+        for cell in cells.values():
+            self.draw_image(cell.get_image(), cell.get_pos())
+            cards = cell.get_cards()
+
+            # draw all cards in the column/free-cell/suit-cell
+            for card in cards:
+                self.draw_image(card.get_image(), card.get_pos())
+

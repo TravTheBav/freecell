@@ -1,7 +1,16 @@
-class Card:
+from mappable_sprite import MappableSprite
+from constants import *
+
+
+class Card(MappableSprite):
     """Represents a standard playing card."""
 
-    def __init__(self, suit, value):
+    def __init__(self, suit, value, image):
+        super().__init__(image)
+
+        self._width = CARD_WIDTH
+        self._height = CARD_HEIGHT
+        self._scale = SCALE
         self._suit = suit
         self._value = value
 
