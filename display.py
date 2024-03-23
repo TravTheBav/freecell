@@ -11,48 +11,91 @@ class Display:
         self._surface = pg.display.set_mode((1280, 720))
         pg.display.set_caption("Free Cell")
 
+        # for card dragging
+        self._mouse_drag_x_offset = None
+        self._mouse_drag_y_offset = None
+
     def get_width(self):
         """Returns the width of the screen"""
 
         return self._surface.get_size()[0]
-
+    
+    def get_stagger_value(self, array):
+        """Returns an integer value based on how many elements are in the array.
+         The more elements the smaller the value will be."""
+        
+        if len(array) <= 8:
+            return 40
+        elif len(array) <= 12:
+            return 35
+        else:
+            return 30
+    
     def check_event(self, event):
         """Checks the type of the event and calls the related event handlers."""
 
-        pass
+        if event.type == pg.MOUSEBUTTONDOWN:
+            mouse_pos = event.pos
+            self.check_card_click(mouse_pos)
+        elif event.type == pg.MOUSEMOTION:
+            mouse_pos = event.pos
+            self.check_card_dragging(mouse_pos)
+        elif event.type == pg.MOUSEBUTTONUP:
+            mouse_pos = event.pos
+            self.check_card_placement(mouse_pos)
 
-    def mouse_clicked(self):
-        """Detects when the left mouse button is clicked and calls methods to handle
-         the event."""
-    
-        pass
-
-    def mouse_down(self):
-        """Detects when the left mouse button is held down and calls methods to
-         handle the event."""
-
-        pass
-
-    def mouse_released(self):
-        """Detects when the left mouse button is released and calls methods to
-         handle the event."""
-        
-        pass
-
-    def check_card_click(self):
-        """Checks if a card has been clicked and updates any game information related
+    def check_card_click(self, mouse_pos):
+        """Takes a mouse position coordinate. Checks if a card has been clicked and updates any game information related
          to a card click."""
 
-        pass
+        # add free cells and columns to the list of areas to check
+        card_areas = []
+        free_cells = self._game.get_card_areas()["free-cells"]
+        columns = self._game.get_card_areas()["column-cells"]
 
-    def check_card_dragging(self):
-        """Checks if any cards are currently being dragged by the player and updates
+        for free_cell in free_cells.values():
+            card_areas.append(free_cell)
+        for column in columns.values():
+            card_areas.append(column)
+
+        # check cards in free-cells/columns, starting at the bottom for each area and moving upward
+        columns = self._game.get_card_areas()["column-cells"]
+
+        for card_area in card_areas:
+            if card_area.is_empty(): continue
+
+            # from bottom to top, check if mouse clicked the card in the card_area
+            for card in reversed(card_area.get_cards()):
+
+                if card.get_rect().collidepoint(mouse_pos):
+                    self._game.select_card(card, card_area)
+
+                    # update mouse movement offsets
+                    mouse_x, mouse_y = mouse_pos
+                    self._mouse_drag_x_offset = card.get_x() - mouse_x
+                    self._mouse_drag_y_offset = card.get_y() - mouse_y
+
+                    return  # once card has been clicked, stop searching
+
+    def check_card_dragging(self, mouse_pos):
+        """Takes a mouse position coordinate. Checks if any cards are currently being dragged by the player and updates
          the positions for any selected cards."""
         
-        pass
+        selected_cards = self._game.get_selected_cards()
 
-    def check_card_placement(self):
-        """Checks where any selected cards are dropped and moves them to the correct
+        # if selected cards, update the positions for each card
+        if selected_cards:
+            mouse_x, mouse_y = mouse_pos
+            x = mouse_x + self._mouse_drag_x_offset
+            y = mouse_y + self._mouse_drag_y_offset
+
+            y_offset = self.get_stagger_value(selected_cards)
+            for card in selected_cards:
+                card.set_pos(x, y)
+                y += y_offset
+
+    def check_card_placement(self, mouse_pos):
+        """Takes a mouse position coordinate. Checks where any selected cards are dropped and moves them to the correct
          position on the display."""
         
         pass
@@ -91,6 +134,7 @@ class Display:
         self.render_cells("free-cells")
         self.render_cells("suit-cells")
         self.render_cells("column-cells")
+        self.render_selected_cards()
 
     def render_cells(self, area_type):
         """Takes in an area type string, which can be 'suit-cells', 'column-cells', or 'free-cells'.
@@ -106,4 +150,12 @@ class Display:
             # draw all cards in the column/free-cell/suit-cell
             for card in cards:
                 self.draw_image(card.get_image(), card.get_pos())
+
+    def render_selected_cards(self):
+        """Draws any cards currently being dragged to the screen."""
+        
+        selected = self._game.get_selected_cards()
+
+        for card in selected:
+            self.draw_image(card.get_image(), card.get_pos())
 
