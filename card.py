@@ -70,3 +70,13 @@ class Card(MappableSprite):
         """Returns the card's color, which is either red or black depending on the suit."""
 
         return self._color
+    
+    def get_scaled_width(self):
+        """Returns the scaled width of the card."""
+
+        return self._width * self._scale
+    
+    def get_scaled_height(self):
+        """Returns the scaled height of the card."""
+
+        return self._height * self._scale

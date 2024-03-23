@@ -98,13 +98,82 @@ class Display:
         """Takes a mouse position coordinate. Checks where any selected cards are dropped and moves them to the correct
          position on the display."""
         
-        pass
+        selected_cards = self._game.get_selected_cards()
+
+        # if selected cards, check where they are placed (if multiple cards are being dragged, checks where the top card is placed)
+        if selected_cards:
+
+            # get horizontal and vertical mid points for the top selected card
+            card_mid_x, card_mid_y = self.calculate_mid_points(selected_cards[0])
+
+            # add all card areas to the list of areas to check
+            card_areas = []
+            for card_area_type in self._game.get_card_areas().values():
+                for card_area in card_area_type.values():
+                    card_areas.append(card_area)
+
+            for card_area in card_areas:
+                if card_area.is_empty() and self.check_move_to_empty_area(card_area, card_mid_x, card_mid_y):
+                    return  #  return early if the area was empty and the player moved the selection to the area, whether or not it was a valid move
+
+            # after checking all areas, if selected cards were not placed on any valid location, move them back
+            previous_area = self._game.get_previous_cards_area()
+            self._game.move_selection_to_previous_area()
+            self.update_card_positions(previous_area)
+
+    def check_move_to_empty_area(self, card_area, card_mid_x, card_mid_y):
+        """Takes a card area, the middle x value for a card, and the middle y value for a card. If the player
+         is attempting to move the selected card(s) to the area:
+         1.) moves the cards to the area if valid
+         2.) moves the cards back if not valid
+         if either #1 or #2, then method returns True. Else returns False."""
+
+        # check if mid_x and mid_y of top selected card is within the boundaries of the card area
+
+        left = card_area.get_x()
+        right = card_area.get_x() + card_area.get_scaled_width()
+        top = card_area.get_y()
+        bottom = card_area.get_y() + card_area.get_scaled_height()
+
+        # if mid points are in bounds of the card area, then check for valid placement
+        if card_mid_x > left and card_mid_x < right and card_mid_y < bottom and card_mid_y > top:
+
+            # card(s) moved to empty space
+            if self._game.valid_move(card_area):
+                self._game.move_selection_to_area(card_area)
+                self.update_card_positions(card_area)
+            # card(s) moved back to their previous location
+            else:
+                previous_area = self._game.get_previous_cards_area()
+                self._game.move_selection_to_previous_area()
+                self.update_card_positions(previous_area)
+            return True  # returns True if cards were placed on the area (regardless of whether it was a valid move)
+        
+        # returns False if cards were not placed on the area
+        return False
+
+    def calculate_mid_points(self, card):
+        """Returns a tuple in the form (mid_x, mid_y) which contains horizontal and vertical mid points for a card."""
+
+        left = card.get_x()
+        right = card.get_x() + card.get_scaled_width()
+        mid_x = (left + right) / 2
+        top = card.get_y()
+        bottom = card.get_y() + card.get_scaled_height()
+        mid_y = (top + bottom) / 2
+        
+        return (mid_x, mid_y)
 
     def update_card_positions(self, card_area):
         """Takes a CardArea as a parameter and updates the coordinates (x and y values)
          for all cards in the area."""
         
-        pass
+        x, y = card_area.get_x(), card_area.get_y()
+        y_offset = self.get_stagger_value(card_area.get_cards())
+        
+        for card in card_area.get_cards():
+            card.set_pos(x, y)
+            y += y_offset
 
     def fill_background(self):
         """Makes background green."""
