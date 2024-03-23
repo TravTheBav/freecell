@@ -1,4 +1,5 @@
 import pygame as pg
+from suit_cell import SuitCell
 
 
 class Display:
@@ -75,6 +76,9 @@ class Display:
                     self._mouse_drag_x_offset = card.get_x() - mouse_x
                     self._mouse_drag_y_offset = card.get_y() - mouse_y
 
+                    # update card positions in the cell the cards were just chosen from
+                    self.update_card_positions(card_area)
+
                     return  # once card has been clicked, stop searching
 
     def check_card_dragging(self, mouse_pos):
@@ -113,32 +117,38 @@ class Display:
                     card_areas.append(card_area)
 
             for card_area in card_areas:
-                if card_area.is_empty() and self.check_move_to_empty_area(card_area, card_mid_x, card_mid_y):
-                    return  #  return early if the area was empty and the player moved the selection to the area, whether or not it was a valid move
+                if self.check_move_to_cell(card_area, card_mid_x, card_mid_y):
+                    return  #  return early if the player dragged the selection to the area, whether or not it was a valid move
 
             # after checking all areas, if selected cards were not placed on any valid location, move them back
             previous_area = self._game.get_previous_cards_area()
             self._game.move_selection_to_previous_area()
             self.update_card_positions(previous_area)
 
-    def check_move_to_empty_area(self, card_area, card_mid_x, card_mid_y):
+    def check_move_to_cell(self, card_area, card_mid_x, card_mid_y):
         """Takes a card area, the middle x value for a card, and the middle y value for a card. If the player
          is attempting to move the selected card(s) to the area:
          1.) moves the cards to the area if valid
          2.) moves the cards back if not valid
          if either #1 or #2, then method returns True. Else returns False."""
+        
+        # when placing cards in an empty area, user places them on the area itself
+        # when placing cards in an occupied area, user places them on the last card in that area
+        if card_area.is_empty():
+            placement_area = card_area
+        else:
+            placement_area = card_area.get_cards()[-1]
 
         # check if mid_x and mid_y of top selected card is within the boundaries of the card area
-
-        left = card_area.get_x()
-        right = card_area.get_x() + card_area.get_scaled_width()
-        top = card_area.get_y()
-        bottom = card_area.get_y() + card_area.get_scaled_height()
+        left = placement_area.get_x()
+        right = placement_area.get_x() + placement_area.get_scaled_width()
+        top = placement_area.get_y()
+        bottom = placement_area.get_y() + placement_area.get_scaled_height()
 
         # if mid points are in bounds of the card area, then check for valid placement
         if card_mid_x > left and card_mid_x < right and card_mid_y < bottom and card_mid_y > top:
 
-            # card(s) moved to empty space
+            # card(s) moved to the location picked by the user
             if self._game.valid_move(card_area):
                 self._game.move_selection_to_area(card_area)
                 self.update_card_positions(card_area)
@@ -169,11 +179,19 @@ class Display:
          for all cards in the area."""
         
         x, y = card_area.get_x(), card_area.get_y()
-        y_offset = self.get_stagger_value(card_area.get_cards())
         
-        for card in card_area.get_cards():
-            card.set_pos(x, y)
-            y += y_offset
+        # cards in a suit cell are all stacked on top of each other
+        if isinstance(card_area, SuitCell):
+            for card in card_area.get_cards():
+                card.set_pos(x, y)
+        # cards in a column are staggered (free cells only contain one card so this doesn't need to
+        # check for the free cell type)
+        else:
+            y_offset = self.get_stagger_value(card_area.get_cards())
+
+            for card in card_area.get_cards():
+                card.set_pos(x, y)
+                y += y_offset
 
     def fill_background(self):
         """Makes background green."""
