@@ -34,6 +34,9 @@ class Game:
         self._selected_cards = []
         self._previous_cards_area = None
 
+        # a new game starts with 5 moves (4 free cells + 1)
+        self._moves = 5
+
     def get_display(self):
         """Returns the display."""
 
@@ -171,6 +174,11 @@ class Game:
     def moves_count(self):
         """Returns the count of all empty free cells and column cells, plus one."""
 
+        return self._moves
+    
+    def update_moves_count(self):
+        """Updates the amount of cards that can be moved at a given time."""
+
         moves = 1
         free_cells = self.get_card_areas()["free-cells"]
         columns = self.get_card_areas()["column-cells"]
@@ -181,7 +189,7 @@ class Game:
         for column in columns.values():
             if column.is_empty(): moves += 1
 
-        return moves
+        self._moves = moves
 
     def valid_move(self, card_area):
         """Takes a list of cards and a destination card area. If placing the card(s) in the destination
@@ -197,6 +205,7 @@ class Game:
 
         card_area.place_cards(self._selected_cards)
         self.clear_selection()  # selection and previous area are cleared after card(s) are moved
+        self.update_moves_count()  #  moves count is only updated when cards are placed
 
     def move_selection_to_previous_area(self):
         """Moves all selected cards back to their previous area."""
