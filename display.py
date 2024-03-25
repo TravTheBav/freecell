@@ -10,6 +10,7 @@ class Display:
         
         self._game = game
         self._surface = pg.display.set_mode((1280, 720))
+        self._background_color = (75, 105, 47, 255)
         pg.display.set_caption("Free Cell")
 
         # for card dragging
@@ -17,9 +18,14 @@ class Display:
         self._mouse_drag_y_offset = None
 
     def get_width(self):
-        """Returns the width of the screen"""
+        """Returns the width of the screen."""
 
         return self._surface.get_size()[0]
+    
+    def get_height(self):
+        """Returns the height of the screen."""
+
+        return self._surface.get_size()[1]
     
     def get_stagger_value(self, array):
         """Returns an integer value based on how many elements are in the array.
@@ -38,12 +44,39 @@ class Display:
         if event.type == pg.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
             self.check_card_click(mouse_pos)
+            self.check_reset_button_click(mouse_pos)
         elif event.type == pg.MOUSEMOTION:
             mouse_pos = event.pos
             self.check_card_dragging(mouse_pos)
+            self.check_reset_button_dragged_away(mouse_pos)
         elif event.type == pg.MOUSEBUTTONUP:
             mouse_pos = event.pos
             self.check_card_placement(mouse_pos)
+            self.check_reset_button_release(mouse_pos)
+
+    def check_reset_button_click(self, mouse_pos):
+        """Takes a mouse position coordinate. Checks if the reset button has been pressed and changes its sprite if it has been."""
+
+        reset_button = self._game.get_reset_button()
+        if reset_button.get_rect().collidepoint(mouse_pos):
+            reset_button.set_image_down()
+
+    def check_reset_button_dragged_away(self, mouse_pos):
+        """Takes a mouse position coordinate. Checks if the mouse has been dragged away from the reset button. If so, then set the reset button
+         image to unpressed."""
+        
+        reset_button = self._game.get_reset_button()
+        if not reset_button.get_rect().collidepoint(mouse_pos):
+            reset_button.set_image_up()
+
+    def check_reset_button_release(self, mouse_pos):
+        """Takes a mouse position coordinate. Checks if the reset button has been released and changes its sprite if it has been. Also resets the game
+         by calling the Game's new_game method."""
+
+        reset_button = self._game.get_reset_button()
+        if reset_button.get_rect().collidepoint(mouse_pos):
+            reset_button.set_image_up()
+            self._game.new_game()
 
     def check_card_click(self, mouse_pos):
         """Takes a mouse position coordinate. Checks if a card has been clicked and updates any game information related
@@ -196,7 +229,7 @@ class Display:
     def fill_background(self):
         """Makes background green."""
 
-        self._surface.fill((75, 105, 47, 255))
+        self._surface.fill(self._background_color)
 
     def draw_image(self, image, position):
         """Takes in an image and a position and draws the image onto the screen at that position."""
@@ -208,6 +241,9 @@ class Display:
 
         # fill background with green
         self.fill_background()
+
+        # draw the reset button
+        self.render_reset_button()
 
         # draw all card areas as well as the cards within them
         self.render_card_areas()
@@ -246,3 +282,9 @@ class Display:
         for card in selected:
             self.draw_image(card.get_image(), card.get_pos())
 
+    def render_reset_button(self):
+        """Draws the reset button to the screen."""
+
+        reset_button = self._game.get_reset_button()
+
+        self.draw_image(reset_button.get_image(), reset_button.get_pos())

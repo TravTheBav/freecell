@@ -3,6 +3,8 @@ from free_cell import FreeCell
 from column_cell import ColumnCell
 from suit_cell import SuitCell
 from display import Display
+from reset_button import ResetButton
+
 
 class Game:
     """Represents a game of free cell solitaire. The Game checks for all game logic, such as
@@ -11,6 +13,7 @@ class Game:
 
     def __init__(self):
         self._display = Display(self)
+        self._reset_button = self.create_reset_button()
         self.new_game()
 
     def new_game(self):
@@ -35,6 +38,11 @@ class Game:
         """Returns the display."""
 
         return self._display
+    
+    def get_reset_button(self):
+        """Returns the reset button."""
+
+        return self._reset_button
 
     def get_card_areas(self):
         """Returns the card areas dictionary."""
@@ -115,6 +123,14 @@ class Game:
                 column.add_card(card)
                 card.set_pos(x, y)
                 y += 40  # staggers out cards vertically
+
+    def create_reset_button(self):
+        """Initializes the reset button and returns it."""
+
+        reset_button = ResetButton()
+        y = self._display.get_height() - (reset_button.get_scaled_height() + 20)
+        reset_button.set_pos(20, y)  #  set position at bottom left corner
+        return reset_button
 
     def valid_selection(self, card, card_area):
         """Takes a card object and a card_area object as parameters. If selecting the card from the card area would be 
