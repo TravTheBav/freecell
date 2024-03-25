@@ -20,11 +20,13 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
+            elif event.type == pg.KEYDOWN and event.key == pg.K_r:
+                game.new_game()
             else:
                 display.check_event(event)
 
             display.render()
-            clock.tick(60)
+            clock.tick(144)
 
 
 if __name__ == "__main__":

@@ -11,13 +11,19 @@ class Game:
 
     def __init__(self):
         self._display = Display(self)
-        self._deck = Deck()      # create a new deck and shuffle it
+        self.new_game()
+
+    def new_game(self):
+        """Sets up a game with a new Deck of shuffled cards and fills the columns with cards."""
+
+        self._deck = Deck()
         self._deck.shuffle()
         self._card_areas = {     # format example: card_areas["free-cells"][1] would return the first FreeCell object
             "free-cells": {},
             "column-cells": {},
             "suit-cells": {}
         }
+
         self.init_card_areas()   # initialize the 16 card areas and fill columns with cards
         self.fill_columns()
 
